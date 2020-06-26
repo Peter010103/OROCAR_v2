@@ -1,6 +1,7 @@
 import cv2
 import numpy as np
 
+############################## Detection Elements ##############################
 def thresholding(img):
     imgHSV = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
     lowerColor = np.array([5,103,120])

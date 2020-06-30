@@ -17,10 +17,10 @@ def getLaneCurve(img):
     basePoint, imgHist = utils.getHistogram(imgWarpThres, display =True)
     imgSliding, curves, lanes, ploty = utils.sliding_window(imgWarpThres, draw_windows=True)
 
-    curverad =utils.get_curve(imgLane, curves[0], curves[1])
+    curverad = utils.get_curve(imgLane, curves[0], curves[1])
     lane_curve = np.mean([curverad[0], curverad[1]])
     imgLane = utils.drawLanes(img, curves[0], curves[1], frameWidth, frameHeight, src = points)
-    print(round((lane_curve-92.39)/7,2))
+    print(round((lane_curve-84.41)/7.5,2))
 
     imgStack = utils.stackImages(0.6, ([imgOriginal, imgWarpThres, imgWarpPoints],[imgHist, imgSliding, imgLane]))
 
@@ -36,12 +36,13 @@ def getLaneCurve(img):
     return None
 
 if __name__ == '__main__':
-    cameraFeed= False
+    cameraFeed= True
     frameWidth= 640
     frameHeight = 480
 
     if cameraFeed:
         cap = cv2.VideoCapture(0)
+        # cap = cv2.VideoCapture('images/output.mp4')
         cap.set(3, frameWidth)
         cap.set(4, frameHeight)
 

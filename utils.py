@@ -1,11 +1,10 @@
 import cv2
 import numpy as np
 
-############################## Detection Elements ##############################
 def thresholding(img):
     imgHSV = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
-    lowerColor = np.array([5,103,120])
-    upperColor = np.array([20,203,218])
+    lowerColor = np.array([5,100,150])
+    upperColor = np.array([50,230,220])
     maskColor = cv2.inRange(imgHSV, lowerColor, upperColor)
 
     # imgTHRES = cv2.bitwise_or(maskColor, canny(img))

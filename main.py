@@ -19,10 +19,10 @@ def getLaneCurve(img):
 
     curverad = utils.get_curve(imgLane, curves[0], curves[1])
     lane_curve = np.mean([curverad[0], curverad[1]])
-    imgLane = utils.drawLanes(img, curves[0], curves[1], frameWidth, frameHeight, src = points)
-    print(round((lane_curve-84.41)/7.5,2))
+    # imgLane = utils.drawLanes(img, curves[0], curves[1], frameWidth, frameHeight, src = points)
+    # print(round((lane_curve-84.41)/7.5,2))
 
-    imgStack = utils.stackImages(0.6, ([imgOriginal, imgWarpThres, imgWarpPoints],[imgHist, imgSliding, imgLane]))
+    imgStack = utils.stackImages(0.6, ([imgOriginal, imgWarpThres, imgWarpPoints],[imgHist, imgSliding, imgOriginal]))
 
     # cv2.imshow('Thres', imgThres)
     # cv2.imshow('Warp', imgWarpThres)
@@ -39,10 +39,11 @@ if __name__ == '__main__':
     cameraFeed= True
     frameWidth= 640
     frameHeight = 480
+    frameTime = 100 # time of each frame in ms, you can add logic to change this value.
 
     if cameraFeed:
-        cap = cv2.VideoCapture(0)
-        # cap = cv2.VideoCapture('images/output.mp4')
+        # cap = cv2.VideoCapture(0)
+        cap = cv2.VideoCapture('images/output.mp4')
         cap.set(3, frameWidth)
         cap.set(4, frameHeight)
 
@@ -51,6 +52,9 @@ if __name__ == '__main__':
     while True:
         if cameraFeed:
             _, img = cap.read()
+            img = cv2.resize(img,(frameWidth,frameHeight))
+            if cv2.waitKey(frameTime) & 0xFF == ord('q'):
+                break
         else:
             img = cv2.imread('images/curved.jpg', cv2.IMREAD_COLOR)
             img = cv2.resize(img,(frameWidth,frameHeight))

@@ -2,32 +2,39 @@ import cv2
 import numpy as np
 
 ## cameraFeed = True indicates you are using a camera source, if False use test image (change image source below)
-cameraFeed = False
-frameWidth = 400
-frameHeight = 300
+cameraFeed = True
+frameWidth = 640
+frameHeight = 480
+frameTime = 100 # time of each frame in ms, you can add logic to change this value.
 
 if cameraFeed:
-    cap = cv2.VideoCapture(0)
+    cap = cv2.VideoCapture('images/output.mp4')
     cap.set(3, frameWidth)
     cap.set(4, frameHeight)
  
 def empty(a):
     pass
+
+def initializeTrackbars(intialTrackbarVals,wT=640, hT=480):
+    cv2.namedWindow("HSV")
+    cv2.resizeWindow("HSV",frameWidth,frameHeight)
+    cv2.createTrackbar("HUE Min","HSV",initialTrackBarVals[0],179,empty)
+    cv2.createTrackbar("HUE Max","HSV",initialTrackBarVals[1],179,empty)
+    cv2.createTrackbar("SAT Min","HSV",initialTrackBarVals[2],255,empty)
+    cv2.createTrackbar("SAT Max","HSV",initialTrackBarVals[3],255,empty)
+    cv2.createTrackbar("VALUE Min","HSV",initialTrackBarVals[4],255,empty)
+    cv2.createTrackbar("VALUE Max","HSV",initialTrackBarVals[5],255,empty)
  
-cv2.namedWindow("HSV")
-cv2.resizeWindow("HSV",frameWidth,frameHeight)
-cv2.createTrackbar("HUE Min","HSV",0,179,empty)
-cv2.createTrackbar("HUE Max","HSV",179,179,empty)
-cv2.createTrackbar("SAT Min","HSV",0,255,empty)
-cv2.createTrackbar("SAT Max","HSV",255,255,empty)
-cv2.createTrackbar("VALUE Min","HSV",0,255,empty)
-cv2.createTrackbar("VALUE Max","HSV",255,255,empty)
+initialTrackBarVals = [5,50,100,230,150,220]
+initializeTrackbars(initialTrackBarVals)
  
 while True:
     if cameraFeed:
         _, img = cap.read()
+        if cv2.waitKey(frameTime) & 0xFF == ord('q'):
+            break
     else:
-        img = cv2.imread('images/straight.jpg', cv2.IMREAD_COLOR)
+        img = cv2.imread('images/curved.jpg', cv2.IMREAD_COLOR)
         img = cv2.resize(img,(frameWidth,frameHeight))
     
     imgHsv = cv2.cvtColor(img,cv2.COLOR_BGR2HSV)
@@ -46,9 +53,9 @@ while True:
     result = cv2.bitwise_and(img,img, mask = mask)
  
     mask = cv2.cvtColor(mask, cv2.COLOR_GRAY2BGR)
-    hStack = np.hstack([img,mask,result])
+    hStack = np.hstack([img,imgHsv,mask,result])
     #cv2.imshow('Original', img)
-    cv2.imshow('HSV Color Space', imgHsv)
+    # cv2.imshow('HSV Color Space', imgHsv)
     #cv2.imshow('Mask', mask)
     #cv2.imshow('Result', result)
     cv2.imshow('Horizontal Stacking', hStack)

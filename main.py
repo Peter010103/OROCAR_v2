@@ -39,7 +39,7 @@ if __name__ == '__main__':
     cameraFeed= True
     frameWidth= 640
     frameHeight = 480
-    frameTime = 100 # time of each frame in ms, you can add logic to change this value.
+    frameTime = 50 # time of each frame in ms, you can add logic to change this value.
 
     if cameraFeed:
         # cap = cv2.VideoCapture(0)

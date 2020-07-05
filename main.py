@@ -1,6 +1,7 @@
 import cv2
 import numpy as np
 import utils
+import time
 
 def getLaneCurve(img):
     h ,w, c = img.shape
@@ -19,27 +20,25 @@ def getLaneCurve(img):
 
     curverad = utils.get_curve(imgLane, curves[0], curves[1])
     lane_curve = np.mean([curverad[0], curverad[1]])
-    # imgLane = utils.drawLanes(img, curves[0], curves[1], frameWidth, frameHeight, src = points)
+    imgLane = utils.drawLanes(img, curves[0], curves[1], frameWidth, frameHeight, src = points)
     # print(round((lane_curve-84.41)/7.5,2))
 
-    imgStack = utils.stackImages(0.6, ([imgOriginal, imgWarpThres, imgWarpPoints],[imgHist, imgSliding, imgOriginal]))
-
-    # cv2.imshow('Thres', imgThres)
-    # cv2.imshow('Warp', imgWarpThres)
-    # cv2.imshow('Warp Points', imgWarpPoints)
-    # cv2.imshow('Canny', imgCanny)
-    # cv2.imshow('Histogram', imgHist)
-    # cv2.imshow('Sliding', imgSliding)
-    # cv2.imshow('Lane', imgLane)
+    imgStack = utils.stackImages(0.6, ([imgOriginal, imgWarpThres, imgWarpPoints],[imgHist, imgSliding, imgLane]))
     cv2.imshow('Stack', imgStack)
 
-    return None
+    return cv2.resize(imgStack,(2*frameHeight,frameHeight))
 
 if __name__ == '__main__':
-    cameraFeed= True
-    frameWidth= 640
+    videoRecord = False
+    cameraFeed = True
+    frameWidth = 640
     frameHeight = 480
     frameTime = 50 # time of each frame in ms, you can add logic to change this value.
+    start = time.time()
+
+    if videoRecord:
+        img_array = []
+        imgOut = []
 
     if cameraFeed:
         # cap = cv2.VideoCapture(0)
@@ -59,5 +58,19 @@ if __name__ == '__main__':
             img = cv2.imread('images/curved.jpg', cv2.IMREAD_COLOR)
             img = cv2.resize(img,(frameWidth,frameHeight))
         # img = img[::-1,:,:]
+
         getLaneCurve(img)
-        cv2.waitKey(1)
+        
+        if videoRecord:
+            imgOut = getLaneCurve(img)
+            img_array.append(imgOut)
+
+        if time.time() - start > 40:
+            break
+    
+    if videoRecord:
+        img_array.append(imgOut)
+        out = cv2.VideoWriter('output/demo.avi',cv2.VideoWriter_fourcc(*'XVID'), 10, (2*frameHeight, frameHeight))
+        for i in range(len(img_array)):
+            out.write(img_array[i])
+        out.release()

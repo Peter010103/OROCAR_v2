@@ -60,7 +60,7 @@ def get_hist(img):
 left_a, left_b, left_c = [], [], []
 right_a, right_b, right_c = [], [], []
 
-def sliding_window(img, nwindows=5, margin=50, minpix=1, draw_windows=True):
+def sliding_window(img, nwindows=5, margin=40, minpix=1, draw_windows=True):
     global left_a, left_b, left_c, right_a, right_b, right_c
     left_fit_ = np.empty(3)
     right_fit_ = np.empty(3)
@@ -72,6 +72,10 @@ def sliding_window(img, nwindows=5, margin=50, minpix=1, draw_windows=True):
     midpoint = int(histogram.shape[0] / 2)
     leftx_base = np.argmax(histogram[:midpoint])
     rightx_base = np.argmax(histogram[midpoint:]) + midpoint
+
+    # print(leftx_base)
+    # print(rightx_base)
+    # print()
 
     # Set height of windows
     window_height = np.int(img.shape[0] / nwindows)
@@ -111,7 +115,11 @@ def sliding_window(img, nwindows=5, margin=50, minpix=1, draw_windows=True):
                           (nonzerox >= win_xleft_low) & (nonzerox < win_xleft_high)).nonzero()[0]
         good_right_inds = ((nonzeroy >= win_y_low) & (nonzeroy < win_y_high) &
                            (nonzerox >= win_xright_low) & (nonzerox < win_xright_high)).nonzero()[0]
-        
+        if len(good_left_inds)==0:
+            good_left_inds =good_right_inds
+        if len(good_right_inds)==0:
+            good_right_inds =good_left_inds
+
         # Append these indices to the lists
         left_lane_inds.append(good_left_inds)
         right_lane_inds.append(good_right_inds)
@@ -180,9 +188,9 @@ def get_curve(img, leftx, rightx):
 
     # Fit new polynomials to x,y in world space
     if type(leftx) != np.ndarray:
-        leftx = np.zeros((480,))
+        leftx = np.zeros((img.shape[0],))
     if type(rightx) != np.ndarray:
-        rightx = np.zeros((480,))
+        rightx = np.zeros((img.shape[0],))
 
     left_fit_cr = np.polyfit(ploty * ym_per_pix, leftx * xm_per_pix, 2)
     right_fit_cr = np.polyfit(ploty * ym_per_pix, rightx * xm_per_pix, 2)
@@ -237,10 +245,17 @@ def drawLanes(img, left_fit, right_fit,frameWidth,frameHeight,src):
     ploty = np.linspace(0, img.shape[0] - 1, img.shape[0])
     color_img = np.zeros_like(img)
 
+    if type(left_fit) != np.ndarray:
+        left_fit = np.zeros((480,))
+        # left_fit = np.linspace(0, img.shape[1])
+    if type(right_fit) != np.ndarray:
+        right_fit = np.ones((480,))*frameWidth
+
+    # print(left_fit.shape)
+    # if left_fit.shape == (480,) and right_fit.shape == (480,):
     left = np.array([np.transpose(np.vstack([left_fit, ploty]))])
     right = np.array([np.flipud(np.transpose(np.vstack([right_fit, ploty])))])
     points = np.hstack((left, right))
-
     cv2.fillPoly(color_img, np.int_(points), (88, 86, 240))
     
     return color_img

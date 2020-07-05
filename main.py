@@ -4,17 +4,18 @@ import utils
 import time
 
 def getLaneCurve(img):
+    imgCopy = img.copy()
+
     h ,w, c = img.shape
     points = utils.valTrackbars()
 
-    imgOriginal = img.copy()
     imgThres = utils.thresholding(img)
-    imgWarp = utils.warpImg(img, points, w, h)
+    # imgWarp = utils.warpImg(img, points, w, h)
     imgWarpThres = utils.warpImg(imgThres, points, w, h)
-    imgWarpPoints = utils.drawPoints(img, points)
+    imgWarpPoints = utils.drawPoints(imgCopy, points)
     imgLane = img.copy()
 
-    imgCanny = utils.canny(imgWarp)
+    # imgCanny = utils.canny(imgWarp)
     basePoint, imgHist = utils.getHistogram(imgWarpThres, display =True)
     imgSliding, curves, lanes, ploty = utils.sliding_window(imgWarpThres, draw_windows=True)
 
@@ -23,13 +24,14 @@ def getLaneCurve(img):
     imgLane = utils.drawLanes(img, curves[0], curves[1], frameWidth, frameHeight, src = points)
     # print(round((lane_curve-84.41)/7.5,2))
 
-    imgStack = utils.stackImages(0.6, ([imgOriginal, imgWarpThres, imgWarpPoints],[imgHist, imgSliding, imgLane]))
+    imgStack = utils.stackImages(0.6, ([img, imgWarpThres, imgWarpPoints],[imgHist, imgSliding, imgLane]))
     cv2.imshow('Stack', imgStack)
 
     return cv2.resize(imgStack,(2*frameHeight,frameHeight))
 
 if __name__ == '__main__':
-    videoRecord = False
+    videoRecord = True
+    videoRecordTime = 26
     cameraFeed = True
     frameWidth = 640
     frameHeight = 480
@@ -65,7 +67,7 @@ if __name__ == '__main__':
             imgOut = getLaneCurve(img)
             img_array.append(imgOut)
 
-        if time.time() - start > 40:
+        if time.time() - start > videoRecordTime:
             break
     
     if videoRecord:

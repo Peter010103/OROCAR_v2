@@ -12,7 +12,8 @@ The car body is from the Waveshare Jetracer AI Kit [(link)](https://www.waveshar
 ## Lane Tracking
 After converting the camera image to HSV space, thresholding the output and applying a warp function (warp points shown top right), we obtained the second image. Summing the number of white pixels in the vertical axis along the frameWidth gave a histogram (shown bottom left), which allowed the initialization of the slidingwindow algorithm. The mid-points of our windows were used to estimate the lanes via a polyfit approach and the detected lane is shown on the bottom right.
 
-Due to the narrow angle view of the Raspberry camera, there arises some occasions where only one of the lanes is detected in the warp view. The demo below was applied to images obtained from manual control of the vehicle with a wireless joystick. One goal for the autonomous driving controller is that both lanes will remain in frame, despite the vehicle driving at high velocity.\\
+Due to the narrow angle view of the Raspberry camera, there arises some occasions where only one of the lanes is detected in the warp view. The demo below was applied to images obtained from manual control of the vehicle with a wireless joystick. One goal for the autonomous driving controller is that both lanes will remain in frame, despite the vehicle driving at high velocity.
+
 <p align="center">
   <img src="output/demo.gif" width="640">
 </p>

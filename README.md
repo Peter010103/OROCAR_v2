@@ -9,6 +9,13 @@ The car body is from the Waveshare Jetracer AI Kit [(link)](https://www.waveshar
   <img src="images/Car_Frame_2.jpg" width="300">
 </p>
 
+The schmematic of the board provided in the kit differs slightly in the motor driver section. Below is the revised schematic that was created by manually probing the connections. It implements two DRV8870 PWM controlled H-bridge ICs to control the left and right motors independently.
+
+<p align="center">
+  <img src="assets/Electronics/Analysis.svg" width="640">
+</p>
+
+
 ## Lane Tracking
 After converting the camera image to HSV space, thresholding the output and applying a warp function (warp points shown top right), we obtained the second image. Summing the number of white pixels in the vertical axis along the frameWidth gave a histogram (shown bottom left), which allowed the initialization of the slidingwindow algorithm. The mid-points of our windows were used to estimate the lanes via a polyfit approach and the detected lane is shown on the bottom right.
 
